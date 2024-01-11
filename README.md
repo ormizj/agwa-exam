@@ -14,6 +14,12 @@ pip install -r requirements.txt
 cdk deploy
 ```
 
+3. close the server
+
+```
+cdk destroy
+```
+
 ### COMPONENTS
 
 ### TESTING
