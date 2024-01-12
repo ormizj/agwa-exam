@@ -1,0 +1,16 @@
+TODO add error handling to the requests
+TODO finish the diagram
+TODO change it so when uploading a file, it automatically calls the other lambda function to store a compressed version of the file
+TODO add testing
+TODO uploading a file -> triggers compression first, if compression failed
+TODO update the README
+TODO handle status codes
+
+TODO add config
+
+// json file containing all the keys of the "config.json", but with the values of the "config.json" replaced with dummy data
+TODO add config-template
+
+TODO if compressed log fails, the problem will the added to the uncompressed log
+
+TODO stage 5

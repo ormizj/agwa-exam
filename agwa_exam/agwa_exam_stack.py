@@ -18,7 +18,7 @@ class AgwaExamStack(Stack):
             self, "ProcessLogLambda",
             runtime=_lambda.Runtime.PYTHON_3_8,
             handler="process_log.handler",
-            code=_lambda.Code.from_asset("lambda_functions"),
+            code=_lambda.Code.from_asset("lambda"),
             environment={
                 "TARGET_BUCKET": uncompressed_bucket.bucket_name
             }
@@ -30,7 +30,7 @@ class AgwaExamStack(Stack):
             self, "CompressLogLambda",
             runtime=_lambda.Runtime.PYTHON_3_8,
             handler="compress_log.handler",
-            code=_lambda.Code.from_asset("lambda_functions"),
+            code=_lambda.Code.from_asset("lambda"),
             environment={
                 "SOURCE_BUCKET": uncompressed_bucket.bucket_name,
                 "TARGET_BUCKET": compressed_bucket.bucket_name

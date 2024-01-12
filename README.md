@@ -23,3 +23,5 @@ cdk destroy
 ### COMPONENTS
 
 ### TESTING
+
+### PERSONAL NOTES
