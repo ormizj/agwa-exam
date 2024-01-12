@@ -14,3 +14,5 @@ TODO add config-template
 TODO if compressed log fails, the problem will the added to the uncompressed log
 
 TODO stage 5
+
+TODO router, that will take requests and redirect them?

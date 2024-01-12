@@ -1,6 +1,6 @@
 ### Log File Upload and Auto-Compression System
 
-Assignment Goal: Design and implement a solution to enable log file upload and auto-comperssion.
+Assignment Goal: Design and implement a solution to enable log file upload and auto-compression.
 
 #### Objective:
 

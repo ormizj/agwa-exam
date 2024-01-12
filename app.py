@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
-import os
-
-import aws_cdk as cdk
-
 from agwa_exam.agwa_exam_stack import AgwaExamStack
-
+import os
+import aws_cdk as cdk
 
 app = cdk.App()
 AgwaExamStack(app, "AgwaExamStack",
