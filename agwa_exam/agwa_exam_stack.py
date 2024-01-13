@@ -29,21 +29,23 @@ class AgwaExamStack(Stack):
         )
         uncompressed_bucket.grant_read_write(compressed_log_lambda)
 
-        # create Lambda function to compress log file and store in S3 bucket
-        compress_log_lambda = _lambda.Function(
+        # create Lambda function to compressed log file and store in S3 bucket
+        compressed_log_lambda = _lambda.Function(
             self,
             'CompressedLogLambda',
             runtime=PYTHON_RUNTIME,
-            handler='compress_log.handler',
+            handler='compressed_log.handler',
             code=CODE_PATH,
             environment={
                 'SOURCE_BUCKET': uncompressed_bucket.bucket_name,
                 'TARGET_BUCKET': compressed_bucket.bucket_name
             }
         )
-        compressed_bucket.grant_read_write(compress_log_lambda)
+        compressed_bucket.grant_read_write(compressed_log_lambda)
 
         # create API Gateway to trigger lambda function
         api = apigateway.RestApi(self, 'LogProcessingApi')
         integration = apigateway.LambdaIntegration(compressed_log_lambda)
         api.root.add_resource('create-log').add_method('POST', integration)
+        
+        # didn't create an API for the compressed log lambda function since the function is triggered by the uncompressed log lambda function (speculation)
