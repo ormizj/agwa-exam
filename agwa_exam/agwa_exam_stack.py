@@ -7,6 +7,9 @@ from constructs import Construct
 PYTHON_RUNTIME = _lambda.Runtime.PYTHON_3_9
 CODE_PATH = _lambda.Code.from_asset('lambda')
 
+"""
+represents the aws cloud formation stack for the Agwa Exam app.
+"""
 class AgwaExamStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
@@ -21,7 +24,7 @@ class AgwaExamStack(Stack):
             self,
             'UncompressedLogLambda',
             runtime=PYTHON_RUNTIME,
-            handler="uncompressed_log.handler",
+            handler='uncompressed_log.handler',
             code=CODE_PATH,
             environment={
                 'TARGET_BUCKET': uncompressed_log_bucket.bucket_name
@@ -37,7 +40,6 @@ class AgwaExamStack(Stack):
             handler='compressed_log.handler',
             code=CODE_PATH,
             environment={
-                'SOURCE_BUCKET': uncompressed_log_bucket.bucket_name,
                 'TARGET_BUCKET': compressed_log_bucket.bucket_name
             }
         )
