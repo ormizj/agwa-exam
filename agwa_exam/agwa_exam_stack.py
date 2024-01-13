@@ -17,7 +17,7 @@ class AgwaExamStack(Stack):
         compressed_log_bucket = s3.Bucket(self, 'CompressedLogBucket')
 
         # create Lambda function to store log file in S3 bucket
-        compressed_log_lambda = _lambda.Function(
+        uncompressed_log_lambda = _lambda.Function(
             self,
             'UncompressedLogLambda',
             runtime=PYTHON_RUNTIME,
@@ -27,7 +27,7 @@ class AgwaExamStack(Stack):
                 'TARGET_BUCKET': uncompressed_log_bucket.bucket_name
             }
         )
-        uncompressed_log_bucket.grant_read_write(compressed_log_lambda)
+        uncompressed_log_bucket.grant_read_write(uncompressed_log_lambda)
 
         # create Lambda function to compressed log file and store in S3 bucket
         compressed_log_lambda = _lambda.Function(
@@ -45,7 +45,7 @@ class AgwaExamStack(Stack):
 
         # create API Gateway to trigger lambda function
         api = apigateway.RestApi(self, 'LogProcessingApi')
-        integration = apigateway.LambdaIntegration(compressed_log_lambda)
+        integration = apigateway.LambdaIntegration(uncompressed_log_lambda)
         api.root.add_resource('create-log').add_method('POST', integration)
         
         # didn't create an API for the compressed log lambda function since the function is triggered by the uncompressed log lambda function (speculation)
