@@ -13,8 +13,8 @@ class AgwaExamStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
        # create S3 buckets to store log files
-        uncompressed_bucket = s3.Bucket(self, 'UncompressedBucket')
-        compressed_bucket = s3.Bucket(self, 'CompressedBucket')
+        uncompressed_log_bucket = s3.Bucket(self, 'UncompressedLogBucket')
+        compressed_log_bucket = s3.Bucket(self, 'CompressedLogBucket')
 
         # create Lambda function to store log file in S3 bucket
         compressed_log_lambda = _lambda.Function(
@@ -24,10 +24,10 @@ class AgwaExamStack(Stack):
             handler="uncompressed_log.handler",
             code=CODE_PATH,
             environment={
-                'TARGET_BUCKET': uncompressed_bucket.bucket_name
+                'TARGET_BUCKET': uncompressed_log_bucket.bucket_name
             }
         )
-        uncompressed_bucket.grant_read_write(compressed_log_lambda)
+        uncompressed_log_bucket.grant_read_write(compressed_log_lambda)
 
         # create Lambda function to compressed log file and store in S3 bucket
         compressed_log_lambda = _lambda.Function(
@@ -37,11 +37,11 @@ class AgwaExamStack(Stack):
             handler='compressed_log.handler',
             code=CODE_PATH,
             environment={
-                'SOURCE_BUCKET': uncompressed_bucket.bucket_name,
-                'TARGET_BUCKET': compressed_bucket.bucket_name
+                'SOURCE_BUCKET': uncompressed_log_bucket.bucket_name,
+                'TARGET_BUCKET': compressed_log_bucket.bucket_name
             }
         )
-        compressed_bucket.grant_read_write(compressed_log_lambda)
+        compressed_log_bucket.grant_read_write(compressed_log_lambda)
 
         # create API Gateway to trigger lambda function
         api = apigateway.RestApi(self, 'LogProcessingApi')
