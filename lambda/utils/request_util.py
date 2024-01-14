@@ -17,3 +17,8 @@ def error_result(status_code, data)->dict:
             'data': data
         }),
     };
+    
+def send_email_to_admin()->None:
+    # sends an email to the admin
+    # this function should not throw an exception
+    pass

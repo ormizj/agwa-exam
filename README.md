@@ -26,7 +26,7 @@ cdk destroy
 
 basic tests:
 
-1. running the basic tests from the unit tests (this will run a test for the `AgwaExamStack` class)
+1. running the basic tests from the unit tests (this will run a test for the `agwa_exam_stack.py` file)
 
 ```
 python -m unittest discover -p 'test_*.py' tests
