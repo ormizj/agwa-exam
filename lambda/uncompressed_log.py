@@ -1,75 +1,69 @@
-from utils.time_util import get_current_timestamp
 import json
+import logging
 import boto3
 import os
+from utils.db_util import create_uuid
 
 def handler(event, context):
-    try:        
-        # parse request body into json
+    try:
+        # prepare data
         parsed_data = json.loads(event['body'])
-
-        # get current timestamp to ensure unique name for the log
-        timestamp = get_current_timestamp()
+        s3 = boto3.client('s3')
+        sns = boto3.client('sns')
         
         # default to 'untitled' if no name provided, considered returning an error with status code 400
         # but wouldn't make sense in a logging scenario (prioritize logging over error handling)
-        log_name = parsed_data.get('name','untitled')
-        log_key = f"uncompressed_log-{log_name}({timestamp}).txt"
+        name = parsed_data.get('name', 'untitled')
+        name_id = f"{name}({create_uuid()})" # create unique id for log file
         
-        log_content = parsed_data.get('content')
-        
-        # returning bad request if log content is missing or empty (nothing to log)
-        # TODO add this to the compressed log lambda function
-        # if not log_content or not log_content.strip():
-        #     return {
-        #         'statusCode': 400,
-        #         'body': 'Error: Log content is missing or empty'
-        #     }
+        # setup data for creating log files
+        content = parsed_data.get('content')
+        uncompressed_log_key = f"uncompressed_log-{name_id}.txt" 
 
-        # upload log file to S3 bucket
-        s3 = boto3.client('s3')
-        s3.put_object(
-            Body=log_content,
-            Bucket=os.environ['TARGET_BUCKET'], 
-            Key=log_key
-        )
-        
+        # create logs
+        is_request_sent = create_compressed_log_request(sns, name_id, content)
+        create_uncompressed_log(s3, uncompressed_log_key, content)
+
+        # handle failed compression log request
+        if (not is_request_sent):
+            internal_uncompressed_log_key = f"internal_uncompressed_log-{name_id}.txt"
+            create_uncompressed_log(s3, internal_uncompressed_log_key, 'Failed to compress log file')
+
         return {
             'statusCode': 200,
-            'body': 'Log file stored successfully!'
+            'body': 'Log file created successfully!'
         }
-        
+
     except Exception as e:
+        logging.error(f"Error: {str(e)}")
         return {
             'statusCode': 500,
             'body': f"Error: {str(e)}"
         }
 
-def invoke_compression_lambda(log_name, log_content):
-    try:
-        # Create a Lambda client
-        lambda_client = boto3.client('lambda')
+def create_uncompressed_log(s3, log_key, log_content)->None:
+    s3.put_object(
+        Body=log_content,
+        Bucket=os.environ['TARGET_BUCKET'],
+        Key=log_key
+    )
 
-        # Payload with the parameters you want to pass
+def create_compressed_log_request(sns, log_name, log_content)->bool:
+    try:        
         payload = {
             'name': log_name,
             'content': log_content
         }
-
-        # Invoke the Lambda function
-        response = lambda_client.invoke(
-            FunctionName='CompressLogLambda',
-            InvocationType='Event',  # Asynchronous invocation
-            Payload=json.dumps(payload)
+        
+        # create compressed log request trough SNS
+        response = sns.publish(
+            TopicArn=os.environ['TOPIC_ARN'],  # Get the topic ARN from the environment variables
+            Message=json.dumps(payload),
         )
-
-        # Check the response
-        if response['StatusCode'] == 200:
-            return True
-        else:
-            logging.error(f"Lambda invocation failed with StatusCode: {response['StatusCode']}")
-            return False
+        
+        # return whether publishing the message was successful
+        return 'MessageId' in response
 
     except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
+        logging.error(f"Error: {str(e)}")
         return False
