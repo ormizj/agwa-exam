@@ -14,11 +14,12 @@ class AgwaExamStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # create SNS topic, buckets and lambdas
+        # create SNS topic, buckets, and lambdas
         uncompressed_log_bucket = s3.Bucket(self, 'UncompressedLogBucket')
         compressed_log_bucket = s3.Bucket(self, 'CompressedLogBucket')
         topic = sns.Topic(self, 'Topic')
 
+        # create uncompressed log lambda
         uncompressed_log_lambda = _lambda.Function(
             self,
             'UncompressedLogLambda',
@@ -32,6 +33,7 @@ class AgwaExamStack(Stack):
         )
         uncompressed_log_bucket.grant_read_write(uncompressed_log_lambda)
 
+        # create compressed log lambda
         compressed_log_lambda = _lambda.Function(
             self,
             'CompressedLogLambda',
