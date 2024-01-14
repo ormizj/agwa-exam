@@ -11,9 +11,9 @@ def handler(event, context):
         s3 = boto3.client('s3')
 
         # setup data for creating log files
-        log_name = parsed_data.get('name')
+        name_id = parsed_data.get('name_id')
         log_content = parsed_data.get('content')
-        compressed_log_key = f"compressed_log-{log_name}.txt.gz"
+        compressed_log_key = f"compressed_log-{name_id}.txt.gz"
         
         # create compressed log
         compressed_log_content = gzip.compress(log_content.encode('utf-8'))

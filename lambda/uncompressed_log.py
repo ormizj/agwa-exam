@@ -48,10 +48,10 @@ def create_uncompressed_log(s3, log_key, log_content)->None:
         Key=log_key
     )
 
-def create_compressed_log_request(sns, log_name, log_content)->bool:
+def create_compressed_log_request(sns, name_id, log_content)->bool:
     try:        
         payload = {
-            'name': log_name,
+            'name_id': name_id,
             'content': log_content
         }
         
