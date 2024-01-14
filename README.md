@@ -33,3 +33,7 @@ python -m unittest discover -p 'test_*.py' tests
 ```
 
 ### PERSONAL NOTES
+
+### SOLUTION ARCHITECTURE DIAGRAM
+
+![Solution Architecture Diagram](assets/solution-architecture-diagram/Solution%20Architecture%20Diagram.png)
