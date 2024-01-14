@@ -14,10 +14,9 @@ class AgwaExamStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        # create SNS topic, buckets and lambdas
         uncompressed_log_bucket = s3.Bucket(self, 'UncompressedLogBucket')
         compressed_log_bucket = s3.Bucket(self, 'CompressedLogBucket')
-
-        # Create SNS Topic
         topic = sns.Topic(self, 'Topic')
 
         uncompressed_log_lambda = _lambda.Function(
@@ -45,13 +44,11 @@ class AgwaExamStack(Stack):
         )
         compressed_log_bucket.grant_read_write(compressed_log_lambda)
 
-        # Subscribe CompressedLogLambda to the topic
+        # create SNS subscription from uncompressed log lambda to compressed log lambda
         topic.add_subscription(subscriptions.LambdaSubscription(compressed_log_lambda))
-
-        # Grant the 'UncompressedLogLambda' function permissions to publish to the topic
         topic.grant_publish(uncompressed_log_lambda)
 
-        # Create API Gateway to trigger lambda function
+        # create API gateway for uncompressed log lambda
         api = apigateway.RestApi(self, 'LogProcessingApi')
         integration = apigateway.LambdaIntegration(uncompressed_log_lambda)
         api.root.add_resource('create-log').add_method('POST', integration)
