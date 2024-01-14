@@ -3,6 +3,7 @@ import logging
 import boto3
 import os
 from utils.db_util import create_uuid
+from utils.request_util import success_result, error_result
 
 def handler(event, context):
     try:
@@ -26,20 +27,16 @@ def handler(event, context):
 
         # handle failed compression log request
         if (not is_request_sent):
-            internal_uncompressed_log_key = f"internal_uncompressed_log-{name_id}.txt"
+            # saved an uncompressed log to indicate failed compression,
+            # to send an email to the admin, or to send a notification to the admin
+            internal_uncompressed_log_key = f"failed_compress_log-{name_id}.txt"
             create_uncompressed_log(s3, internal_uncompressed_log_key, 'Failed to compress log file')
 
-        return {
-            'statusCode': 200,
-            'body': 'Log file created successfully!'
-        }
+        return success_result(200, 'Log file created successfully!')
 
     except Exception as e:
         logging.error(f"Error: {str(e)}")
-        return {
-            'statusCode': 500,
-            'body': f"Error: {str(e)}"
-        }
+        return error_result(500, f"Error: {str(e)}")
 
 def create_uncompressed_log(s3, log_key, log_content)->None:
     s3.put_object(

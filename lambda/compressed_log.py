@@ -3,6 +3,7 @@ import logging
 import boto3
 import os
 import gzip
+from utils.request_util import success_result, error_result
 
 def handler(event, context):
     try:
@@ -19,17 +20,11 @@ def handler(event, context):
         compressed_log_content = gzip.compress(log_content.encode('utf-8'))
         create_compressed_log(s3, compressed_log_key, compressed_log_content)
 
-        return {
-            'statusCode': 200,
-            'body': 'Compressed log file created successfully!'
-        }
+        return success_result(200, 'Compressed log file created successfully!')
 
     except Exception as e:
         logging.error(f"Error: {str(e)}")
-        return {
-            'statusCode': 500,
-            'body': f"Error: {str(e)}"
-        }
+        return error_result(500, f"Error: {str(e)}")
 
 def create_compressed_log(s3, log_key, log_content)->None:    
     s3.put_object(
