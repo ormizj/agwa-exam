@@ -6,11 +6,7 @@ from utils.db_util import create_uuid, sanitize_filename
 from utils.request_util import success_result, error_result, send_email_to_admin
 
 def handler(event, context):
-    try:
-        # only allow supported invocation methods, to avoid false alarms
-        if 'httpMethod' not in event:
-            return error_result(400, 'Invalid invocation method, please use HTTP request')
-        
+    try:        
         # prepare data
         parsed_data = json.loads(event['body'])
         s3 = boto3.client('s3')

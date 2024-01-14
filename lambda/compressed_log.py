@@ -8,10 +8,6 @@ from utils.request_util import success_result, error_result, send_email_to_admin
 
 def handler(event, context):
     try:
-        # only allow supported invocation methods, to avoid false alarms
-         if 'Records' not in event:
-            return error_result(400, 'Invalid invocation method, please use SNS request.')
-        
         # prepare data
         parsed_data = json.loads(event['Records'][0]['Sns']['Message'])
         s3 = boto3.client('s3')
