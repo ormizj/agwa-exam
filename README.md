@@ -14,7 +14,7 @@ pip install -r requirements.txt
 cdk deploy
 ```
 
-3. Run tests
+3. [Run tests](#testing)
 
 4. Close the server when done
 
