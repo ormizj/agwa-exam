@@ -12,6 +12,9 @@ def handler(event, context):
     lambda function handler that creates a compressed log file in S3
     the lambda function should be sent through an sns event
     with the message containing: {name_id: str, content: str}
+    
+    the name_id should be unique and will be sanitized if needed
+    see utils/db_util.py->sanitize_filename
 
     Args:
         event (dict): the event data passed to the lambda function

@@ -11,6 +11,9 @@ def handler(event, context):
     lambda function handler for creating uncompressed log files,
     the lambda function should be sent through an http request
     with the body containing: {name: str, content: str}
+    
+    the name and will be sanitized if needed
+    see utils/db_util.py->sanitize_filename
 
     Args:
         event (dict): the event data passed to the lambda function
