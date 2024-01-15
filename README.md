@@ -94,7 +94,7 @@ If the request was successful, there should be a `txt` file in the `uncompressed
 
 - `utils` - Kept the purpose of each util file quite broad, because of the lack of currently existing utilities
 
-- Solution Architecture Diagram is located in `assets->solution-architecture-diagram` with all relevant files
+- Solution Architecture Diagram - Is located in `assets->solution-architecture-diagram` with all relevant files
 
 ---
 
