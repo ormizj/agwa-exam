@@ -45,7 +45,7 @@ def handler(event, context):
 
         # handle failure to send compressed log request
         if (not is_request_sent):
-            send_email_to_admin()  # send an email, etc... to the admin to notify of the issue
+            send_email_to_admin()  # send an email, message, etc... to the admin to notify of the issue
 
         return success_result(200, 'Log file created successfully!')
 
