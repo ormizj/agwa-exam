@@ -10,6 +10,7 @@ from constructs import Construct
 PYTHON_RUNTIME = _lambda.Runtime.PYTHON_3_9
 CODE_PATH = _lambda.Code.from_asset('lambda')
 
+
 class AgwaExamStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
