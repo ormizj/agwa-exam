@@ -22,6 +22,8 @@ cdk deploy
 cdk destroy
 ```
 
+---
+
 ### COMPONENTS
 
 #### `lambda`
@@ -43,6 +45,8 @@ cdk destroy
 #### `root`
 
 - `app.py` - Initializes the `agwa_exam_stack.py` when running the `cdk deploy` command
+
+---
 
 ### TESTING
 
@@ -78,15 +82,21 @@ Example:
 
 If the request was successful, there should be a `txt` file in the `uncompressedlogbucket` and a `gz` file in the `compressedlogbucket`
 
+---
+
 ### PERSONAL NOTES
 
-- lambda functions - I kept the 2 functions as modular as possible (`compressed_log.py` & `uncompressed_log.py` call the `sanitize_filename` function, to ensure that each function can work individually)
+- error handling - I minimized the odds of error occurrences (doesn't check if a `name` is given, doesn't check if `content` is empty), I didn't want a log creation failing considering its job is to log failures
+
+- lambda functions modularity - I kept the 2 functions as modular as possible (`compressed_log.py` & `uncompressed_log.py` call the `sanitize_filename` function, to ensure that each function can work individually), also success of the `UncompressedLogLambda` is not reliant on the success of the `CompressedLogLambda`
 
 - `agwa_exam_stack.py` - Will grant `read` & `write` privileges to the lambda functions, I thought about checking if a file exists before saving a file, to ensure not overwriting existing file (`UUID4` does not guarantee 100% unique identifier, but the odds are so low, i didn't take that slim chance into consideration)
 
 - `utils` - Kept the purpose of each util file quite broad, because of the lack of currently existing utilities
 
 - Solution Architecture Diagram is located in `assets->solution-architecture-diagram` with all relevant files
+
+---
 
 ### SOLUTION ARCHITECTURE DIAGRAM
 
